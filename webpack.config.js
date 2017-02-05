@@ -1,39 +1,34 @@
-var path    = require('path');
-var webpack = require('webpack');
+/*
+ ./webpack.config.js
+ */
+const path = require('path');
+
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
+  template: './client/index.html',
+  filename: 'index.html',
+  inject: 'body'
+});
 
 module.exports = {
-  entry:  [
-    'webpack-dev-server/client?http://127.0.0.1:8080/',
-    'webpack/hot/only-dev-server',
-    './client'
-  ],
+  entry: './client/index.js',
   output: {
-    path:     path.join(__dirname, 'dist'),
-    filename: 'bundle.js'
-  },
-  resolve: {
-    modulesDirectories: ['node_modules', 'shared'],
-    extensions:         ['', '.js', '.jsx']
+    path: path.join(__dirname, 'dist'),
+    filename: 'index_bundle.js'
   },
   module: {
     loaders: [
       {
-        test:    /\.jsx?$/,
-        exclude: /node_modules/,
-        loaders: ['react-hot', 'babel']
-      }
+        test: /\.(js)$/, // look for .js files
+        exclude: /node_modules/, // ignore /node_modules
+        loader: 'babel-loader', // preprocess with that babel goodness
+        query: {
+          presets: ['react']
+        }
+      },
     ]
   },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
-  ],
-  devtool: 'inline-source-map',
-  devServer: {
-    hot: true,
-    proxy: {
-      '*': 'http://127.0.0.1:' + (process.env.PORT || 4000)
-    },
-    host: '127.0.0.1'
-  }
-};
+  // add this line
+  plugins: [HtmlWebpackPluginConfig],
+  watch: true,
+}
